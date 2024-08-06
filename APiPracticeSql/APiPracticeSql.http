@@ -1,0 +1,6 @@
+@APiPracticeSql_HostAddress = http://localhost:5243
+
+GET {{APiPracticeSql_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
