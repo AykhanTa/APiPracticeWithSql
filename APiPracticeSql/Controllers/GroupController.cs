@@ -1,7 +1,9 @@
 ﻿using ApiPractice.DAL.Data;
+using ApiPractice.DAL.Extensions;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Entities;
 using APiPracticeSql.Mappers;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,10 +14,11 @@ namespace APiPracticeSql.Controllers
     public class GroupController : ControllerBase
     {
         private readonly ApiPracticeContext _context;
-
-        public GroupController(ApiPracticeContext context)
+        private readonly IMapper _mapper;
+        public GroupController(ApiPracticeContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         [HttpGet("")]
         public async Task<IActionResult> Get()
@@ -26,7 +29,7 @@ namespace APiPracticeSql.Controllers
             List<GroupReturnDto> list = new();
             foreach (var group in groups)
             {
-                list.Add(GroupMapper.GroupToGroupReturnDto(group));
+                list.Add(_mapper.Map<GroupReturnDto>(group));
             }
             return Ok(list);
         }
@@ -37,16 +40,23 @@ namespace APiPracticeSql.Controllers
                 .Include(g=>g.Students) 
                 .FirstOrDefaultAsync(g => g.Id == id);
             if (existGroup is null) return NotFound();
-            return Ok(GroupMapper.GroupToGroupReturnDto(existGroup));
+            return Ok(_mapper.Map<GroupReturnDto>(existGroup));
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Create(GroupCreateDto groupCreateDto)
+        public async Task<IActionResult> Create([FromForm]GroupCreateDto groupCreateDto)
         {
             if (await _context.Groups.AnyAsync(g => g.Name.ToLower() == groupCreateDto.Name.ToLower()))
                 return BadRequest("group name already exist...");
-            
-            await _context.Groups.AddAsync(GroupMapper.GroupCreateDtoToGroup(groupCreateDto));
+
+            var file = groupCreateDto.File;
+
+
+            Group group = new();
+            group.Name=groupCreateDto.Name;
+            group.Limit=groupCreateDto.Limit;
+            group.Image = file.Save(Directory.GetCurrentDirectory(), "images");
+            await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
             return StatusCode(201);
         }
