@@ -2,7 +2,7 @@
 using ApiPractice.DAL.Extensions;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Entities;
-using APiPracticeSql.Mappers;
+using APiPracticeSql.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -44,18 +44,11 @@ namespace APiPracticeSql.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Create([FromForm]GroupCreateDto groupCreateDto)
+        public async Task<IActionResult> Create(GroupCreateDto groupCreateDto)
         {
             if (await _context.Groups.AnyAsync(g => g.Name.ToLower() == groupCreateDto.Name.ToLower()))
                 return BadRequest("group name already exist...");
-
-            var file = groupCreateDto.File;
-
-
-            Group group = new();
-            group.Name=groupCreateDto.Name;
-            group.Limit=groupCreateDto.Limit;
-            group.Image = file.Save(Directory.GetCurrentDirectory(), "images");
+            var group = _mapper.Map<Group>(groupCreateDto);
             await _context.Groups.AddAsync(group);
             await _context.SaveChangesAsync();
             return StatusCode(201);
@@ -67,7 +60,14 @@ namespace APiPracticeSql.Controllers
             var existGroup = await _context.Groups.FirstOrDefaultAsync(g => g.Id == id);
             if (existGroup is null) return NotFound();
             if (existGroup.Name.ToLower()!= groupUpdateDto.Name.ToLower() && await _context.Groups.AnyAsync(g =>g.Id!=id && g.Name.ToLower() == groupUpdateDto.Name.ToLower()))
-                return BadRequest("group name already exist..."); 
+                return BadRequest("group name already exist...");
+
+            if (groupUpdateDto.File!=null)
+            {
+                string path = Path.Combine(Directory.GetCurrentDirectory(),"wwwroot","images",existGroup.Image);
+                FileHelper.Delete(path);
+                existGroup.Image = groupUpdateDto.File.Save(Directory.GetCurrentDirectory(), "images");
+            }
             existGroup.Name= groupUpdateDto.Name;   
             existGroup.Limit= groupUpdateDto.Limit;
             await _context.SaveChangesAsync();

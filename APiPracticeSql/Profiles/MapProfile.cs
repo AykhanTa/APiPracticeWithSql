@@ -1,4 +1,6 @@
-﻿using APiPracticeSql.Dtos.GroupDtos;
+﻿using ApiPractice.DAL.Extensions;
+using APiPracticeSql.Dtos.GroupDtos;
+using APiPracticeSql.Dtos.StudentDtos;
 using APiPracticeSql.Entities;
 using AutoMapper;
 
@@ -18,9 +20,23 @@ namespace APiPracticeSql.Profiles
                (int) _contextAccessor.HttpContext.Request.Host.Port
                 );
             var url = uriBuilder.Uri.AbsoluteUri;
+
+            //student
+            CreateMap<StudentCreateDto, Student>();
+            CreateMap<Student, StudentReturnDto>();
             CreateMap<Student, StudentInGroupReturnDto>();
+            CreateMap<StudentUpdateDto, Student>();
+
+            CreateMap<Group,GroupInStudentReturnDto>();
+            
+
+
+            //group
             CreateMap<Group, GroupReturnDto>()
                 .ForMember(d => d.Image, map => map.MapFrom(s => url+"images/"+s.Image));
+
+            CreateMap<GroupCreateDto, Group>()
+                .ForMember(d => d.Image, map => map.MapFrom(d => d.File.Save(Directory.GetCurrentDirectory(), "images")));
 
         }
     }
