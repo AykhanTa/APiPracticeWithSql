@@ -1,4 +1,6 @@
-﻿using ApiPractice.DAL.Extensions;
+﻿using ApiPractice.DAL.Entities;
+using ApiPractice.DAL.Extensions;
+using APiPracticeSql.Dtos.BookDtos;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Dtos.StudentDtos;
 using APiPracticeSql.Entities;
@@ -38,6 +40,12 @@ namespace APiPracticeSql.Profiles
             CreateMap<GroupCreateDto, Group>()
                 .ForMember(d => d.Image, map => map.MapFrom(d => d.File.Save(Directory.GetCurrentDirectory(), "images")));
 
+
+            //book
+            CreateMap<BookCreateDto, Book>();
+            CreateMap<BookAuthor, AuthorInBookReturnDto>();
+            CreateMap<Book, BookReturnDto>();
+            CreateMap<BookUpdateDto, Book>();
         }
     }
 }
