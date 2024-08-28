@@ -1,37 +1,19 @@
 using ApiPractice.DAL.Data;
+using ApiPractice.DAL.Entities;
+using APiPracticeSql;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Profiles;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args); 
 var config = builder.Configuration;
 // Add services to the container.
 
-builder.Services.AddControllers();
-
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddFluentValidationClientsideAdapters();
-builder.Services.AddValidatorsFromAssemblyContaining<GroupCreateDtoValidator>();
-builder.Services.AddFluentValidationRulesToSwagger();
-
-builder.Services.AddHttpContextAccessor();
-
-builder.Services.AddDbContext<ApiPracticeContext>(opt =>
-{
-    opt.UseSqlServer(config.GetConnectionString("DefaultConnection"));
-});
-
-builder.Services.AddAutoMapper(opt =>
-{
-    opt.AddProfile(new MapProfile(new HttpContextAccessor()));
-});
+builder.Services.Register(config);
 
 
 var app = builder.Build();

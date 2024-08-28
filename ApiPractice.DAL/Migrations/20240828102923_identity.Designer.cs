@@ -4,6 +4,7 @@ using ApiPractice.DAL.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiPractice.DAL.Migrations
 {
     [DbContext(typeof(ApiPracticeContext))]
-    partial class ApiPracticeContextModelSnapshot : ModelSnapshot
+    [Migration("20240828102923_identity")]
+    partial class identity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,24 +159,6 @@ namespace ApiPractice.DAL.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ab57355c-9dfa-497b-b134-8e065f3c6273",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "f572d639-3f40-4f04-8244-8882c2a53413",
-                            Email = "admin@example.com",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@EXAMPLE.COM",
-                            NormalizedUserName = "ADMINUSER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHCCqjzdK0GqeZ6ADivjFIGw6tuWPSlLTHh3QB6l5+qor5AzwqvVaIdp+o/k2FbqBA==",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "bcef2dc2-894d-42d8-a437-25387bb04ebe",
-                            TwoFactorEnabled = false,
-                            UserName = "adminuser"
-                        });
                 });
 
             modelBuilder.Entity("ApiPractice.DAL.Entities.Author", b =>
@@ -261,26 +246,6 @@ namespace ApiPractice.DAL.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ceedbf72-87bb-47f1-af7c-6a248a1a80e4",
-                            Name = "Admin",
-                            NormalizedName = "ADMIN"
-                        },
-                        new
-                        {
-                            Id = "9fe63926-2677-475e-9523-12100512cdce",
-                            Name = "User",
-                            NormalizedName = "USER"
-                        },
-                        new
-                        {
-                            Id = "48426da9-2602-4e73-bb4b-694f0172c385",
-                            Name = "Super-Admin",
-                            NormalizedName = "SUPER-USER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -368,13 +333,6 @@ namespace ApiPractice.DAL.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "ab57355c-9dfa-497b-b134-8e065f3c6273",
-                            RoleId = "ceedbf72-87bb-47f1-af7c-6a248a1a80e4"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
