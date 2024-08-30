@@ -2,11 +2,18 @@
 using ApiPractice.DAL.Entities;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Profiles;
+using APiPracticeSql.Services.Implementations;
+using APiPracticeSql.Services.Interfaces;
+using APiPracticeSql.Settings;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace APiPracticeSql
 {
@@ -45,6 +52,28 @@ namespace APiPracticeSql
                 opt.Password.RequireLowercase=true;
                 opt.Password.RequireDigit=true;
             }).AddEntityFrameworkStores<ApiPracticeContext>().AddDefaultTokenProviders();
+
+
+            services.AddAuthentication(cfg => {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(x => {
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = config["Jwt:Issuer"],
+                    ValidAudience = config["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:SecretKey"]))
+                };
+            });
+
+            services.AddScoped<ITokenService, TokenService>();
+            services.Configure<JwtSetting>(config.GetSection("Jwt"));
+
         }
     }
 }

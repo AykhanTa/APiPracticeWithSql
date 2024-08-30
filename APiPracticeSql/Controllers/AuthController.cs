@@ -1,8 +1,15 @@
 ﻿using ApiPractice.DAL.Entities;
 using APiPracticeSql.Dtos.UserDtos;
+using APiPracticeSql.Services.Interfaces;
+using APiPracticeSql.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace APiPracticeSql.Controllers
 {
@@ -12,10 +19,14 @@ namespace APiPracticeSql.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public AuthController(UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly ITokenService _tokenService;
+        private readonly JwtSetting _jwtSetting;
+        public AuthController(IOptions<JwtSetting> jwtSetting,UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, ITokenService tokenService)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _tokenService = tokenService;
+            _jwtSetting = jwtSetting.Value;
         }
 
         [HttpPost("register")]
@@ -47,8 +58,10 @@ namespace APiPracticeSql.Controllers
             if (!result)
                 return BadRequest();
 
-            //jwt token
-            return Ok();
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+
+            return Ok(new {token=_tokenService.GetToken(userRoles,user,_jwtSetting)});
         }
 
         //[HttpGet]
@@ -60,5 +73,13 @@ namespace APiPracticeSql.Controllers
         //        await _roleManager.CreateAsync(new() { Name = "admin" });
         //    return Ok();
         //}
+
+        [HttpGet("")]
+
+        public async Task<IActionResult> Profile()
+        {
+            var user=await _userManager.FindByNameAsync(User.Identity.Name);
+            return Ok(new {id=user.Id,name=user.UserName});
+        }
     }
 }

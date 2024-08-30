@@ -4,6 +4,7 @@ using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Entities;
 using APiPracticeSql.Helpers;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace APiPracticeSql.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class GroupController : ControllerBase
     {
         private readonly ApiPracticeContext _context;
