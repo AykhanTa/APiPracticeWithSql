@@ -3,6 +3,7 @@ using ApiPractice.DAL.Extensions;
 using APiPracticeSql.Dtos.BookDtos;
 using APiPracticeSql.Dtos.GroupDtos;
 using APiPracticeSql.Dtos.StudentDtos;
+using APiPracticeSql.Dtos.UserDtos;
 using APiPracticeSql.Entities;
 using AutoMapper;
 
@@ -46,6 +47,9 @@ namespace APiPracticeSql.Profiles
             CreateMap<BookAuthor, AuthorInBookReturnDto>();
             CreateMap<Book, BookReturnDto>();
             CreateMap<BookUpdateDto, Book>();
+
+            //user
+            CreateMap<AppUser, UserReturnDto>();
         }
     }
 }

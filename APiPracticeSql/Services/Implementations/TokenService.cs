@@ -24,7 +24,7 @@ namespace APiPracticeSql.Services.Implementations
                 new Claim("FullName",user.FullName),
 
             };
-            claims.AddRange(userRoles.Select(r => new Claim("Role", r)).ToList());
+            claims.AddRange(userRoles.Select(r => new Claim("role", r)).ToList());
 
             var audience = jwtSetting.Audience;
             var issuer =jwtSetting.Issuer;

@@ -12,7 +12,7 @@ namespace APiPracticeSql.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Roles ="Admin")]
     public class GroupController : ControllerBase
     {
         private readonly ApiPracticeContext _context;

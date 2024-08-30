@@ -51,6 +51,7 @@ namespace APiPracticeSql
                 opt.Password.RequireUppercase=true;
                 opt.Password.RequireLowercase=true;
                 opt.Password.RequireDigit=true;
+                opt.SignIn.RequireConfirmedEmail=true;
             }).AddEntityFrameworkStores<ApiPracticeContext>().AddDefaultTokenProviders();
 
 
@@ -72,6 +73,7 @@ namespace APiPracticeSql
             });
 
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.Configure<JwtSetting>(config.GetSection("Jwt"));
 
         }
